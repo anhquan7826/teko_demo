@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -36,6 +37,7 @@ class _HomeViewState extends State<HomeView> {
           return Scaffold(
             body: Center(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
                     'Cannot load products!',
@@ -116,16 +118,17 @@ class _HomeViewState extends State<HomeView> {
             children: List.generate((products.length / 10).ceil(), (index) {
               return GridView.count(
                 crossAxisCount: () {
-                  if (Platform.isAndroid || Platform.isIOS) {
+                  if (kIsWeb) {
+                    return 4;
+                  } else if (Platform.isAndroid || Platform.isIOS) {
                     switch (MediaQuery.of(context).orientation) {
                       case Orientation.portrait:
                         return 2;
                       default:
                         return 3;
                     }
-                  } else {
-                    return 4;
                   }
+                  return 4;
                 }.call(),
                 children: products.getRange(10 * index, 10 * index + 10 > products.length ? products.length : 10 * index + 10).map((id) {
                   return ProductItem(
