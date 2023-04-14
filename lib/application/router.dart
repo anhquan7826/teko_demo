@@ -1,16 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
-
-import '../presentation/splash/splash_screen.dart';
+import 'package:hiring_test/presentation/product/product.view.dart';
 
 GoRouter router = GoRouter(
   debugLogDiagnostics: kDebugMode,
   routes: [
     GoRoute(
-      name: 'home',
+      name: 'product',
       path: '/',
       builder: (context, state) {
-        return const SplashScreen();
+        return const ProductView();
       }
     )
   ],

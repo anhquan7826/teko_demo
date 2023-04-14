@@ -17,11 +17,11 @@ class Product {
       _$ProductFromJson(json);
 
   final int id;
-  final String name;
-  final String sku;
   final String image;
   final String errorDescription;
-  final int? color;
+  String name;
+  String sku;
+  int? color;
 
   Map<String, dynamic> toJson() => _$ProductToJson(this);
 }
