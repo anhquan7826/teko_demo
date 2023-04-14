@@ -6,8 +6,11 @@ part 'product_color.model.g.dart';
 class ProductColor {
   const ProductColor({this.id = -1, this.name = ''});
 
-  factory ProductColor.fromJson(Map<String, dynamic> json) =>
-      _$ProductColorFromJson(json);
+  factory ProductColor.noColor() {
+    return const ProductColor(name: 'No Color');
+  }
+
+  factory ProductColor.fromJson(Map<String, dynamic> json) => _$ProductColorFromJson(json);
 
   final int id;
   final String name;

@@ -1,24 +1,20 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hiring_test/common_widgets/image_network_widget.dart';
 
-import '../../../application/product/product_service.dart';
+import '../../../application/product/product.cubit.dart';
 
 class ProductItem extends StatelessWidget {
-  const ProductItem({required this.id, Key? key}) : super(key: key);
+  const ProductItem({Key? key, required this.id}) : super(key: key);
 
   final int id;
 
   @override
   Widget build(BuildContext context) {
-    final product = ProductService.getProduct(id: id);
-    final changedProduct = ProductService.getProductChanges(id: id);
-
-    if (product == null) {
-      return const Center(
-        child: Icon(Icons.error_outline_outlined),
-      );
-    }
+    final product = BlocProvider.of<ProductCubit>(context).getProduct(id: id)!;
+    final changedProduct = BlocProvider.of<ProductCubit>(context).getProductChanges(id: id);
 
     return InkWell(
       onTap: () {
@@ -37,12 +33,7 @@ class ProductItem extends StatelessWidget {
               height: double.infinity,
               child: Hero(
                 tag: product.id,
-                child: Image.network(
-                  product.image,
-                  errorBuilder: (context, exception, stacktrace) {
-                    return Image.asset('assets/images/error.png');
-                  },
-                ),
+                child: ImageNetworkWidget(url: product.image),
               ),
             ),
           ),

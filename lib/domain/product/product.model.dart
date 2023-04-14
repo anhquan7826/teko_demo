@@ -10,7 +10,7 @@ class Product {
     this.sku = '',
     this.image = '',
     this.errorDescription = '',
-    this.color,
+    this.color = -1,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
@@ -20,7 +20,7 @@ class Product {
   final String errorDescription;
   final String name;
   final String sku;
-  final int? color;
+  final int color;
 
   Map<String, dynamic> toJson() => _$ProductToJson(this);
 
@@ -35,7 +35,7 @@ class Product {
       errorDescription: errorDescription,
       name: name ?? this.name,
       sku: sku ?? this.sku,
-      color: color == -1 ? null : color ?? this.color,
+      color: color ?? this.color,
     );
   }
 }

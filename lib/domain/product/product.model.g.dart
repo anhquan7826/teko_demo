@@ -12,14 +12,14 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       sku: json['sku'] as String? ?? '',
       image: json['image'] as String? ?? '',
       errorDescription: json['errorDescription'] as String? ?? '',
-      color: json['color'] as int?,
+      color: json['color'] as int? ?? -1,
     );
 
 Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
       'id': instance.id,
-      'name': instance.name,
-      'sku': instance.sku,
       'image': instance.image,
       'errorDescription': instance.errorDescription,
+      'name': instance.name,
+      'sku': instance.sku,
       'color': instance.color,
     };
