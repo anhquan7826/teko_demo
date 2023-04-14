@@ -13,15 +13,29 @@ class Product {
     this.color,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) =>
-      _$ProductFromJson(json);
+  factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
 
   final int id;
   final String image;
   final String errorDescription;
-  String name;
-  String sku;
-  int? color;
+  final String name;
+  final String sku;
+  final int? color;
 
   Map<String, dynamic> toJson() => _$ProductToJson(this);
+
+  Product copyWith({
+    String? name,
+    String? sku,
+    int? color,
+  }) {
+    return Product(
+      id: id,
+      image: image,
+      errorDescription: errorDescription,
+      name: name ?? this.name,
+      sku: sku ?? this.sku,
+      color: color == -1 ? null : color ?? this.color,
+    );
+  }
 }

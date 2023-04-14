@@ -6,23 +6,14 @@ import 'package:hiring_test/repository/repository.dart';
 import '../../domain/product_color/product_color.model.dart';
 
 class ProductColorRepository extends Repository {
-  Future<List<ProductColor>> getAllColors() async {
-    final response = await dio.get<List<Map<String, dynamic>>>('https://hiring-test.stag.tekoapis.net/api/colors');
+  Future<Map<int, ProductColor>> getAllColors() async {
+    final response = await dio.get<List<dynamic>>('https://hiring-test.stag.tekoapis.net/api/colors');
     if (response.statusCode == HttpStatus.ok) {
-      return response.data?.map((e) {
-        return ProductColor.fromJson(e);
-      }).toList() ?? [];
+      return Map.fromEntries((response.data?.asMap() ?? {}).entries.map((e) {
+        return MapEntry(e.key, ProductColor.fromJson((e.value as Map).cast<String, dynamic>()));
+      }));
     } else {
       throw NetworkException(response.statusMessage);
-    }
-  }
-
-  Future<ProductColor> getColor({required int id}) async {
-    try {
-      final colors = await getAllColors();
-      return colors.firstWhere((color) => color.id == id);
-    } on NetworkException catch (_) {
-      rethrow;
     }
   }
 }
