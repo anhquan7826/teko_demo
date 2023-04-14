@@ -1,28 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:hiring_test/common/themes/theme.dart';
 
 class PageIndicator extends StatelessWidget {
-  const PageIndicator({Key? key, required this.total, required this.current}) : super(key: key);
+  const PageIndicator({
+    Key? key,
+    required this.total,
+    required this.current,
+    this.onNextPage,
+    this.onPreviousPage,
+  }) : super(key: key);
 
   final int total;
   final int current;
 
+  final Function()? onNextPage;
+  final Function()? onPreviousPage;
+
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(total, (index) {
-        return AnimatedContainer(
-          curve: Curves.ease,
-          duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-          width: current == index ? 32 : 8,
-          height: 8,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: current == index ? Colors.blue : Colors.blue.shade100,
+      mainAxisAlignment: MainAxisAlignment.center, // children: List.generate(total, (index) {
+      children: [
+        if (onPreviousPage != null)
+          IconButton(
+            onPressed: current == 0 ? null : onPreviousPage,
+            iconSize: 14,
+            icon: const Icon(Icons.arrow_back_ios),
           ),
-        );
-      }),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            'Page ${current + 1} / $total',
+            style: AppTheme.pageIndicator,
+          ),
+        ),
+        if (onNextPage != null)
+          IconButton(
+            onPressed: current == total - 1 ? null : onNextPage,
+            iconSize: 14,
+            icon: const Icon(Icons.arrow_forward_ios),
+          ),
+      ],
     );
   }
 }

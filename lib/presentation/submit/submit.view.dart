@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../application/product/product.cubit.dart';
-import '../../common_widgets/image_network_widget.dart';
-import '../../common_widgets/highlighted_text.dart';
+import '../../common/widgets/highlighted_text.dart';
+import '../../common/widgets/image_network_widget.dart';
 import '../../domain/product/product.model.dart';
 
 class SubmitView extends StatelessWidget {
@@ -41,16 +41,18 @@ class SubmitView extends StatelessWidget {
                     child: Column(
                       children: [
                         HighlightedTextRow(
-                          title: 'Name',
                           content: e.value.name,
+                          highlighted: e.key.name != e.value.name,
                         ),
                         HighlightedTextRow(
                           title: 'SKU',
                           content: e.value.sku,
+                          highlighted: e.key.sku != e.value.sku,
                         ),
                         HighlightedTextRow(
                           title: 'Color',
                           content: BlocProvider.of<ProductCubit>(context).getColor(id: e.value.color)?.name ?? 'No Color',
+                          highlighted: e.key.color != e.value.color,
                         ),
                         HighlightedTextRow(
                           title: 'Error',

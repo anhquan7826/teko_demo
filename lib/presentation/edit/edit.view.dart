@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hiring_test/application/product/product.cubit.dart';
-import 'package:hiring_test/common_widgets/confirm_dialog.dart';
 import 'package:hiring_test/domain/product_color/product_color.model.dart';
 import 'package:hiring_test/helper/color/color_helper.dart';
 import 'package:hiring_test/helper/debounce/debounce.dart';
 import 'package:hiring_test/presentation/edit/edit.cubit.dart';
 import 'package:hiring_test/presentation/edit/edit.state.dart';
 import 'package:hiring_test/presentation/error/not_found.view.dart';
+
+import '../../common/themes/theme.dart';
+import '../../common/widgets/confirm_dialog.dart';
 
 class EditView extends StatefulWidget {
   const EditView({Key? key, required this.id}) : super(key: key);
@@ -42,7 +44,10 @@ class _EditViewState extends State<EditView> {
           }
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Edit'),
+              title: Text(
+                'Edit',
+                style: AppTheme.appbarTitle,
+              ),
             ),
             body: body(),
             bottomNavigationBar: cubit.hasChanges() ? actions() : null,
@@ -76,22 +81,28 @@ class _EditViewState extends State<EditView> {
             onChanged: onChanged,
             maxLength: 20,
           ),
-          DropdownButton<ProductColor>(
+          DropdownButtonFormField<ProductColor>(
             items: BlocProvider.of<ProductCubit>(context).getAllColors().map((color) {
               return DropdownMenuItem<ProductColor>(
                 value: color,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(color.name),
-                    Icon(
-                      Icons.circle,
-                      color: ColorHelper.fromString(color.name),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Icon(
+                        Icons.circle,
+                        color: ColorHelper.fromString(color.name),
+                      ),
+                    ),
+                    Text(
+                      color.name,
+                      style: AppTheme.inputText,
                     )
                   ],
                 ),
               );
             }).toList(),
+            decoration: const InputDecoration(border: OutlineInputBorder()),
             hint: const Text('Select colors...'),
             value: cubit.color,
             onChanged: (color) {
@@ -113,16 +124,21 @@ class _EditViewState extends State<EditView> {
     return TextField(
       controller: controller,
       maxLength: maxLength,
+      style: AppTheme.inputText,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: controller.text.isEmpty ? Colors.red : Colors.black),
         ),
         focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-          color: controller.text.isEmpty ? Colors.red : Colors.blue,
-          width: 2,
-        )),
-        label: Text(label),
+          borderSide: BorderSide(
+            color: controller.text.isEmpty ? Colors.red : Colors.blue,
+            width: 2,
+          ),
+        ),
+        label: Text(
+          label,
+          style: AppTheme.buttonLabel,
+        ),
         focusColor: Colors.red,
       ),
       onChanged: (value) {
@@ -139,8 +155,11 @@ class _EditViewState extends State<EditView> {
             onPressed: () {
               if (cubit.isInvalid()) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Name and SKU cannot be empty!'),
+                  SnackBar(
+                    content: Text(
+                      'Name and SKU cannot be empty!',
+                      style: AppTheme.snackBar,
+                    ),
                   ),
                 );
               } else {
@@ -148,7 +167,10 @@ class _EditViewState extends State<EditView> {
                 context.pop();
               }
             },
-            child: const Text('Save'),
+            child: Text(
+              'Save',
+              style: AppTheme.buttonLabel,
+            ),
           ),
         ),
         Expanded(
@@ -156,7 +178,10 @@ class _EditViewState extends State<EditView> {
             onPressed: () {
               showConfirmDialog();
             },
-            child: const Text('Discard'),
+            child: Text(
+              'Discard',
+              style: AppTheme.buttonLabel,
+            ),
           ),
         ),
       ],

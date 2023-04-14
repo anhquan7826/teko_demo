@@ -17,6 +17,10 @@ class MyApp extends StatelessWidget {
       child: OrientationBuilder(
         builder: (context, orientation) {
           return MaterialApp.router(
+            theme: ThemeData(
+              useMaterial3: true,
+              fontFamily: 'Quicksand'
+            ),
             debugShowCheckedModeBanner: false,
             title: 'Product',
             routerConfig: router,

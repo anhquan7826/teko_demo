@@ -9,8 +9,9 @@ class ProductColorRepository extends Repository {
   Future<Map<int, ProductColor>> getAllColors() async {
     final response = await dio.get<List<dynamic>>('https://hiring-test.stag.tekoapis.net/api/colors');
     if (response.statusCode == HttpStatus.ok) {
-      return Map.fromEntries((response.data?.asMap() ?? {}).entries.map((e) {
-        return MapEntry(e.key, ProductColor.fromJson((e.value as Map).cast<String, dynamic>()));
+      return Map.fromEntries((response.data ?? []).map((e) {
+        final color = ProductColor.fromJson((e as Map).cast<String, dynamic>());
+        return MapEntry(color.id, color);
       }));
     } else {
       throw NetworkException(response.statusMessage);

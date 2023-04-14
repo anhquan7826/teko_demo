@@ -6,10 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hiring_test/application/product/product.cubit.dart';
 import 'package:hiring_test/application/product/product.state.dart';
-import 'package:hiring_test/common_widgets/confirm_dialog.dart';
+import 'package:hiring_test/common/themes/theme.dart';
+import 'package:hiring_test/helper/boundary/boundary.dart';
 import 'package:hiring_test/presentation/home/widgets/page_indicator.dart';
 import 'package:hiring_test/presentation/submit/submit.view.dart';
 
+import '../../common/widgets/confirm_dialog.dart';
 import 'widgets/product_item.dart';
 
 class HomeView extends StatefulWidget {
@@ -21,6 +23,12 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProductCubit, ProductState>(
       builder: (context, state) {
@@ -28,7 +36,7 @@ class _HomeViewState extends State<HomeView> {
           return Scaffold(
             body: Center(
               child: SizedBox.square(
-                dimension: 0.2 * MediaQuery.of(context).size.width,
+                dimension: 0.15 * MediaQuery.of(context).size.width,
                 child: const CircularProgressIndicator(),
               ),
             ),
@@ -39,14 +47,25 @@ class _HomeViewState extends State<HomeView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Icon(
+                      Icons.error,
+                      size: 48,
+                    ),
+                  ),
+                  Text(
                     'Cannot load products!',
+                    style: AppTheme.bodyText,
                   ),
                   ElevatedButton(
                     onPressed: () {
                       BlocProvider.of<ProductCubit>(context).loadData();
                     },
-                    child: const Text('Reload'),
+                    child: Text(
+                      'Reload',
+                      style: AppTheme.buttonLabel,
+                    ),
                   ),
                 ],
               ),
@@ -55,44 +74,59 @@ class _HomeViewState extends State<HomeView> {
         } else {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Product'),
+              centerTitle: true,
+              title: Text(
+                'Product',
+                style: AppTheme.appbarTitle,
+              ),
             ),
             body: body(context),
             bottomNavigationBar: BlocProvider.of<ProductCubit>(context).hasChanges()
-                ? ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return SubmitView(
-                            products: BlocProvider.of<ProductCubit>(context).getAllChanges(),
-                            onApply: () {
-                              BlocProvider.of<ProductCubit>(context).applyChanges();
-                              context.pop();
-                            },
-                            onDiscard: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return const ConfirmDialog(
-                                    content: 'Are you sure to discard all changes?',
-                                    acceptTitle: 'Discard',
-                                    rejectTitle: 'Cancel',
-                                  );
-                                },
-                              ).then((value) {
-                                if (value == true) {
-                                  BlocProvider.of<ProductCubit>(context).discardChanges();
-                                  context.pop();
-                                }
-                              });
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: const Text('Submit'),
-                  )
+                ? Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 0.2 * MediaQuery.of(context).size.width,
+                  ),
+                  child: ElevatedButton.icon(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SubmitView(
+                              products: BlocProvider.of<ProductCubit>(context).getAllChanges(),
+                              onApply: () {
+                                BlocProvider.of<ProductCubit>(context).applyChanges();
+                                context.pop();
+                              },
+                              onDiscard: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const ConfirmDialog(
+                                      content: 'Are you sure to discard all changes?',
+                                      acceptTitle: 'Discard',
+                                      rejectTitle: 'Cancel',
+                                    );
+                                  },
+                                ).then((value) {
+                                  if (value == true) {
+                                    BlocProvider.of<ProductCubit>(context).discardChanges();
+                                    context.pop();
+                                  }
+                                });
+                              },
+                            );
+                          },
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.save_outlined,
+                      ),
+                      label: Text(
+                        'Submit',
+                        style: AppTheme.buttonLabel,
+                      ),
+                    ),
+                )
                 : null,
           );
         }
@@ -101,15 +135,16 @@ class _HomeViewState extends State<HomeView> {
   }
 
   int currentIndex = 0;
+  final pageController = PageController();
 
   Widget body(BuildContext context) {
     final products = BlocProvider.of<ProductCubit>(context).getAllProductIds();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        PageIndicator(total: (products.length / 10).ceil(), current: currentIndex),
         Expanded(
           child: PageView(
+            controller: pageController,
             onPageChanged: (index) {
               setState(() {
                 currentIndex = index;
@@ -119,7 +154,11 @@ class _HomeViewState extends State<HomeView> {
               return GridView.count(
                 crossAxisCount: () {
                   if (kIsWeb) {
-                    return 4;
+                    return ValueBoundary.bound(
+                      min: 2,
+                      max: 5,
+                      value: MediaQuery.of(context).size.width / 300,
+                    ).toInt();
                   } else if (Platform.isAndroid || Platform.isIOS) {
                     switch (MediaQuery.of(context).orientation) {
                       case Orientation.portrait:
@@ -131,13 +170,34 @@ class _HomeViewState extends State<HomeView> {
                   return 4;
                 }.call(),
                 children: products.getRange(10 * index, 10 * index + 10 > products.length ? products.length : 10 * index + 10).map((id) {
-                  return ProductItem(
-                    id: id,
+                  return Hero(
+                    tag: id,
+                    child: ProductItem(
+                      id: id,
+                    ),
                   );
                 }).toList(),
               );
             }),
           ),
+        ),
+        PageIndicator(
+          total: (products.length / 10).ceil(),
+          current: currentIndex,
+          onNextPage: () {
+            pageController.animateToPage(
+              currentIndex + 1,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.ease,
+            );
+          },
+          onPreviousPage: () {
+            pageController.animateToPage(
+              currentIndex - 1,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.ease,
+            );
+          },
         ),
       ],
     );

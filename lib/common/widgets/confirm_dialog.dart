@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hiring_test/common/themes/theme.dart';
 
 class ConfirmDialog extends StatelessWidget {
   const ConfirmDialog({
@@ -18,20 +19,32 @@ class ConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(title),
-      content: Text(content),
+      title: Text(
+        title,
+        style: AppTheme.dialogTitle,
+      ),
+      content: Text(
+        content,
+        style: AppTheme.dialogContent,
+      ),
       actions: [
         TextButton(
           onPressed: () {
             context.pop(false);
           },
-          child: Text(rejectTitle),
+          child: Text(
+            rejectTitle,
+            style: AppTheme.buttonLabel,
+          ),
         ),
         TextButton(
           onPressed: () {
             context.pop(true);
           },
-          child: Text(acceptTitle),
+          child: Text(
+            acceptTitle,
+            style: AppTheme.buttonLabel,
+          ),
         ),
       ],
     );
