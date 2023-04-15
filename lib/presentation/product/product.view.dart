@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hiring_test/application/product/product.cubit.dart';
 import 'package:hiring_test/common/widgets/custom_appbar.dart';
-import 'package:hiring_test/common/widgets/zoom_image.dart';
 import 'package:hiring_test/helper/color/color_helper.dart';
 import 'package:hiring_test/presentation/error/not_found.view.dart';
 
@@ -107,20 +106,11 @@ class ProductView extends StatelessWidget {
           bottom: isPortrait ? 16 : 0,
           right: !isPortrait ? 16 : 0,
         ),
-        child: GestureDetector(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return ZoomImageDialog(image: image);
-              },
-            );
-          },
-          child: Hero(
-            tag: id,
-            child: ImageNetworkWidget(
-              url: image,
-            ),
+        child: Hero(
+          tag: id,
+          child: ImageNetworkWidget(
+            zoomOnTap: true,
+            url: image,
           ),
         ),
       ),

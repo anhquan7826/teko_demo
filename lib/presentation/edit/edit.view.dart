@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hiring_test/application/product/product.cubit.dart';
+import 'package:hiring_test/common/widgets/custom_appbar.dart';
 import 'package:hiring_test/domain/product_color/product_color.model.dart';
 import 'package:hiring_test/helper/color/color_helper.dart';
 import 'package:hiring_test/presentation/edit/edit.cubit.dart';
@@ -33,21 +34,14 @@ class _EditViewState extends State<EditView> {
       child: BlocConsumer<EditCubit, EditState>(
         buildWhen: (_, state) => state is EditProductNotFoundState,
         listener: (context, state) {
-          if (state is EditChangedState) {
-            setState(() {});
-          }
+          setState(() {});
         },
         builder: (context, state) {
           if (state is EditProductNotFoundState) {
             return const NotFoundView(error: 'Product not found!');
           }
           return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'Edit',
-                style: AppTheme.appbarTitle,
-              ),
-            ),
+            appBar: appBar(),
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: body(),
@@ -56,6 +50,41 @@ class _EditViewState extends State<EditView> {
           );
         },
       ),
+    );
+  }
+
+  PreferredSizeWidget appBar() {
+    return customAppBar(
+      title: Text(
+        'Edit',
+        style: AppTheme.appbarTitle,
+      ),
+      actions: [
+        if (BlocProvider.of<ProductCubit>(context).getProductChanges(id: widget.id) != null)
+          TextButton.icon(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return const ConfirmDialog(
+                    content: 'Are you sure to revert your changes to original?',
+                    acceptTitle: 'Revert',
+                    rejectTitle: 'Cancel',
+                  );
+                },
+              ).then((value) {
+                if (value == true) {
+                  cubit.revert();
+                }
+              });
+            },
+            icon: const Icon(Icons.history_outlined),
+            label: Text(
+              'Revert',
+              style: AppTheme.buttonLabel,
+            ),
+          ),
+      ],
     );
   }
 
@@ -207,7 +236,6 @@ class _EditViewState extends State<EditView> {
       },
     ).then((value) {
       if (value == true) {
-        cubit.discard();
         context.pop();
       }
     });

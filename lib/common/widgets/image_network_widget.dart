@@ -7,10 +7,12 @@ class ImageNetworkWidget extends StatelessWidget {
     Key? key,
     required this.url,
     this.borderRadius = AppTheme.imageRadius,
+    this.zoomOnTap = false,
   }) : super(key: key);
 
   final String url;
   final double borderRadius;
+  final bool zoomOnTap;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,26 @@ class ImageNetworkWidget extends StatelessWidget {
               );
             }
           }
-          return child;
+          return GestureDetector(
+            onTap: !zoomOnTap
+                ? null
+                : () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    backgroundColor: Colors.transparent,
+                    child: InteractiveViewer(
+                      clipBehavior: Clip.none,
+                      maxScale: 3,
+                      child: Image.network(url),
+                    ),
+                  );
+                },
+              );
+            },
+            child: child,
+          );
         },
         errorBuilder: (context, _, __) {
           return Image.asset('assets/images/error.png');

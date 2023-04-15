@@ -32,3 +32,10 @@ class EditChangedState extends EditState {
   @override
   List<Object?> get props => [color, name, sku];
 }
+
+class EditRevertedState extends EditState {
+  const EditRevertedState();
+
+  @override
+  List<Object?> get props => [];
+}

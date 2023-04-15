@@ -65,7 +65,15 @@ class ProductCubit extends Cubit<ProductState> {
   }
 
   void setProductChanges({required Product product}) {
-    _pendingChanges[product.id] = product;
+    final original = getProduct(id: product.id);
+    if (original == null) {
+      return;
+    }
+    if (original.name == product.name && original.sku == product.sku && original.color == product.color) {
+      _pendingChanges.remove(original.id);
+    } else {
+      _pendingChanges[product.id] = product;
+    }
     emit(ProductChangedState(product));
   }
 

@@ -9,24 +9,20 @@ import 'edit.state.dart';
 
 class EditCubit extends Cubit<EditState> {
   EditCubit(this.context, this.id) : super(const EditInitialState()) {
-    final original = BlocProvider.of<ProductCubit>(context).getProduct(id: id);
-    final changed = BlocProvider.of<ProductCubit>(context).getProductChanges(id: id);
     if (original == null) {
       emit(const EditProductNotFoundState());
     } else {
-      _originalProduct = original;
-      product = changed ?? original;
-      nameController = TextEditingController(text: product.name);
-      skuController = TextEditingController(text: product.sku);
-      color = BlocProvider.of<ProductCubit>(context).getColor(id: product.color) ?? ProductColor.noColor();
+      nameController = TextEditingController(text: (changed ?? original!).name);
+      skuController = TextEditingController(text: (changed ?? original!).sku);
+      color = BlocProvider.of<ProductCubit>(context).getColor(id: (changed ?? original!).color) ?? ProductColor.noColor();
     }
   }
 
   final BuildContext context;
   final int id;
 
-  late final Product _originalProduct;
-  late final Product product;
+  Product? get original => BlocProvider.of<ProductCubit>(context).getProduct(id: id);
+  Product? get changed => BlocProvider.of<ProductCubit>(context).getProductChanges(id: id);
 
   late final TextEditingController nameController;
   late final TextEditingController skuController;
@@ -45,7 +41,7 @@ class EditCubit extends Cubit<EditState> {
   }
 
   bool hasChanges() {
-    return nameController.text != _originalProduct.name || skuController.text != _originalProduct.sku || color.id != _originalProduct.color;
+    return nameController.text != (changed ?? original!).name || skuController.text != (changed ?? original!).sku || color.id != (changed ?? original!).color;
   }
 
   bool isInvalid() {
@@ -60,7 +56,7 @@ class EditCubit extends Cubit<EditState> {
 
   void save() {
     BlocProvider.of<ProductCubit>(context).setProductChanges(
-      product: product.copyWith(
+      product: original!.copyWith(
         name: nameController.text,
         sku: skuController.text,
         color: color.id,
@@ -68,8 +64,12 @@ class EditCubit extends Cubit<EditState> {
     );
   }
 
-  void discard() {
+  void revert() {
     BlocProvider.of<ProductCubit>(context).discardChanges(id: id);
+    nameController.text = original!.name;
+    skuController.text = original!.sku;
+    color = BlocProvider.of<ProductCubit>(context).getColor(id: original!.color) ?? ProductColor.noColor();
+    emit(const EditRevertedState());
   }
 
   @override
