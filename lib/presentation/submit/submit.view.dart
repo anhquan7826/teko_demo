@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../application/product/product.cubit.dart';
+import '../../application/product/product.service.dart';
 import '../../common/widgets/highlighted_text.dart';
 import '../../common/widgets/image_network_widget.dart';
 import '../../domain/product/product.model.dart';
@@ -99,12 +99,12 @@ class SubmitView extends StatelessWidget {
               highlighted: product.key.sku != product.value.sku,
             ),
             HighlightedTextRow(
-              content: BlocProvider.of<ProductCubit>(context).getColor(id: product.value.color)?.name ?? 'No Color',
+              content: BlocProvider.of<ProductService>(context).getColor(id: product.value.color)?.name ?? 'No Color',
               contentLeading: product.value.color == -1
                   ? null
                   : Icon(
                       Icons.circle,
-                      color: ColorHelper.fromString(BlocProvider.of<ProductCubit>(context).getColor(id: product.value.color)?.name ?? ''),
+                      color: ColorHelper.fromString(BlocProvider.of<ProductService>(context).getColor(id: product.value.color)?.name ?? ''),
                     ),
               highlighted: product.key.color != product.value.color,
             ),

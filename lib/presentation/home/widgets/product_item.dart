@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../application/product/product.cubit.dart';
+import '../../../application/product/product.service.dart';
 import '../../../common/themes/theme.dart';
 import '../../../common/widgets/image_network_widget.dart';
 
@@ -14,8 +14,8 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = BlocProvider.of<ProductCubit>(context).getProduct(id: id)!;
-    final changedProduct = BlocProvider.of<ProductCubit>(context).getProductChanges(id: id);
+    final product = BlocProvider.of<ProductService>(context).getProduct(id: id)!;
+    final changedProduct = BlocProvider.of<ProductService>(context).getProductChanges(id: id);
 
     return Container(
       decoration: BoxDecoration(

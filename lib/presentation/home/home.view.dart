@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hiring_test/application/product/product.cubit.dart';
-import 'package:hiring_test/application/product/product.state.dart';
+import 'package:hiring_test/application/product/product.service.dart';
+import 'package:hiring_test/application/product/product.service.state.dart';
 import 'package:hiring_test/common/themes/theme.dart';
 import 'package:hiring_test/common/widgets/custom_appbar.dart';
 import 'package:hiring_test/helper/boundary/boundary.dart';
@@ -34,7 +34,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProductCubit, ProductState>(
+    return BlocBuilder<ProductService, ProductState>(
       builder: (context, state) {
         if (state is ProductLoadingState) {
           return Scaffold(
@@ -64,7 +64,7 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      BlocProvider.of<ProductCubit>(context).loadData();
+                      BlocProvider.of<ProductService>(context).loadData();
                     },
                     child: Text(
                       'Reload',
@@ -79,7 +79,7 @@ class _HomeViewState extends State<HomeView> {
           return Scaffold(
             appBar: appBar(),
             body: body(context),
-            bottomNavigationBar: BlocProvider.of<ProductCubit>(context).hasChanges()
+            bottomNavigationBar: BlocProvider.of<ProductService>(context).hasChanges()
                 ? submit()
                 : null,
           );
@@ -98,7 +98,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget body(BuildContext context) {
-    final products = BlocProvider.of<ProductCubit>(context).getAllProductIds();
+    final products = BlocProvider.of<ProductService>(context).getAllProductIds();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -172,9 +172,9 @@ class _HomeViewState extends State<HomeView> {
             context: context,
             builder: (context) {
               return SubmitView(
-                products: BlocProvider.of<ProductCubit>(context).getAllChanges(),
+                products: BlocProvider.of<ProductService>(context).getAllChanges(),
                 onApply: () {
-                  BlocProvider.of<ProductCubit>(context).applyChanges();
+                  BlocProvider.of<ProductService>(context).applyChanges();
                   context.pop();
                 },
                 onDiscard: () {
@@ -189,7 +189,7 @@ class _HomeViewState extends State<HomeView> {
                     },
                   ).then((value) {
                     if (value == true) {
-                      BlocProvider.of<ProductCubit>(context).discardChanges();
+                      BlocProvider.of<ProductService>(context).discardChanges();
                       context.pop();
                     }
                   });
@@ -199,7 +199,7 @@ class _HomeViewState extends State<HomeView> {
           );
         },
         icon: const Icon(
-          Icons.save_outlined,
+          Icons.done_rounded,
         ),
         label: Text(
           'Submit',

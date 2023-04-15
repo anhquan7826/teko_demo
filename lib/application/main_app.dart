@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hiring_test/application/product/product.cubit.dart';
+import 'package:hiring_test/application/product/product.service.dart';
 import 'package:hiring_test/application/router.dart';
 
 class MyApp extends StatelessWidget {
@@ -10,8 +10,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ProductCubit>(
-          create: (context) => ProductCubit(),
+        BlocProvider<ProductService>(
+          create: (context) => ProductService(),
         ),
       ],
       child: OrientationBuilder(

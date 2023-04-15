@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hiring_test/application/product/product.state.dart';
+import 'package:hiring_test/application/product/product.service.state.dart';
 
 import '../../domain/product/product.model.dart';
 import '../../domain/product_color/product_color.model.dart';
 import '../../repository/product/product.repository.dart';
 import '../../repository/product_color/product_color.repository.dart';
 
-class ProductCubit extends Cubit<ProductState> {
-  ProductCubit() : super(const ProductInitialState()) {
+class ProductService extends Cubit<ProductState> {
+  ProductService() : super(const ProductInitialState()) {
     loadData();
   }
 

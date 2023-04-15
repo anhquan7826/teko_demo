@@ -24,6 +24,15 @@ class AppTheme {
     fontSize: 15,
   );
 
+  static final tableTitle = _textStyle.copyWith(
+    fontSize: 15,
+    fontWeight: FontWeight.w700,
+  );
+
+  static final tableContent = _textStyle.copyWith(
+    fontSize: 15,
+  );
+
   static final buttonLabel = _textStyle.copyWith(
     fontSize: 14,
   );
@@ -51,4 +60,6 @@ class AppTheme {
   static const highlightColor = Colors.green;
 
   static const double imageRadius = 16;
+
+  static const double editIcon = 16;
 }
