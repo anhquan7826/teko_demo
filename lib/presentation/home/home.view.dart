@@ -38,6 +38,7 @@ class _HomeViewState extends State<HomeView> {
       builder: (context, state) {
         if (state is ProductLoadingState) {
           return Scaffold(
+            appBar: appBar(),
             body: Center(
               child: SizedBox.square(
                 dimension: 0.15 * MediaQuery.of(context).size.width,
@@ -47,6 +48,7 @@ class _HomeViewState extends State<HomeView> {
           );
         } else if (state is ProductLoadErrorState) {
           return Scaffold(
+            appBar: appBar(),
             body: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
