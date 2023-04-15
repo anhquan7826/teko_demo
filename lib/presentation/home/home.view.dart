@@ -77,6 +77,7 @@ class _HomeViewState extends State<HomeView> {
           );
         } else {
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: appBar(),
             body: body(context),
             bottomNavigationBar: BlocProvider.of<ProductService>(context).hasChanges()
@@ -99,64 +100,70 @@ class _HomeViewState extends State<HomeView> {
 
   Widget body(BuildContext context) {
     final products = BlocProvider.of<ProductService>(context).getAllProductIds();
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          child: PageView(
-            controller: pageController,
-            onPageChanged: (index) {
-              setState(() {
-                currentIndex = index;
-              });
-            },
-            children: List.generate((products.length / 10).ceil(), (index) {
-              return GridView.count(
-                crossAxisCount: () {
-                  if (kIsWeb) {
-                    return ValueBoundary.bound(
-                      min: 2,
-                      max: 5,
-                      value: MediaQuery.of(context).size.width / 300,
-                    ).toInt();
-                  } else if (Platform.isAndroid || Platform.isIOS) {
-                    switch (MediaQuery.of(context).orientation) {
-                      case Orientation.portrait:
-                        return 2;
-                      default:
-                        return 3;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: PageView(
+              controller: pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
+              children: List.generate((products.length / 10).ceil(), (index) {
+                return GridView.count(
+                  childAspectRatio: 3 / 4,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  crossAxisCount: () {
+                    if (kIsWeb) {
+                      return ValueBoundary.bound(
+                        min: 2,
+                        max: 5,
+                        value: MediaQuery.of(context).size.width / 300,
+                      ).toInt();
+                    } else if (Platform.isAndroid || Platform.isIOS) {
+                      switch (MediaQuery.of(context).orientation) {
+                        case Orientation.portrait:
+                          return 2;
+                        default:
+                          return 3;
+                      }
                     }
-                  }
-                  return 4;
-                }.call(),
-                children: products.getRange(10 * index, 10 * index + 10 > products.length ? products.length : 10 * index + 10).map((id) {
-                  return ProductItem(
-                    id: id,
-                  );
-                }).toList(),
-              );
-            }),
+                    return 4;
+                  }.call(),
+                  children: products.getRange(10 * index, 10 * index + 10 > products.length ? products.length : 10 * index + 10).map((id) {
+                    return ProductItem(
+                      id: id,
+                    );
+                  }).toList(),
+                );
+              }),
+            ),
           ),
-        ),
-        PageIndicator(
-          total: (products.length / 10).ceil(),
-          current: currentIndex,
-          onNextPage: () {
-            pageController.animateToPage(
-              currentIndex + 1,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.ease,
-            );
-          },
-          onPreviousPage: () {
-            pageController.animateToPage(
-              currentIndex - 1,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.ease,
-            );
-          },
-        ),
-      ],
+          PageIndicator(
+            total: (products.length / 10).ceil(),
+            current: currentIndex,
+            onNextPage: () {
+              pageController.animateToPage(
+                currentIndex + 1,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.ease,
+              );
+            },
+            onPreviousPage: () {
+              pageController.animateToPage(
+                currentIndex - 1,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.ease,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 

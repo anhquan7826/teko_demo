@@ -22,8 +22,7 @@ class ProductItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.imageRadius),
         color: AppTheme.productCardItem,
       ),
-      margin: const EdgeInsets.all(4),
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(8),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
@@ -31,29 +30,31 @@ class ProductItem extends StatelessWidget {
             'id': id.toString(),
           });
         },
-        child: Column(
-          children: [
-            Expanded(
-              flex: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(6),
-                child: Hero(
-                  tag: id,
-                  child: ImageNetworkWidget(url: product.image),
-                ),
-              ),
-            ),
-            Expanded(
-              child: AutoSizeText(
+        child: GridTile(
+          header: Hero(
+            tag: id,
+            child: ImageNetworkWidget(url: product.image),
+          ),
+          footer: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AutoSizeText(
                 changedProduct?.name ?? product.name,
-                style: TextStyle(
+                style: AppTheme.productLabel.copyWith(
                   color: changedProduct != null ? Colors.green : Colors.black,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
               ),
-            ),
-          ],
+              AutoSizeText(
+                product.errorDescription,
+                style: AppTheme.productErrorLabel,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+              ),
+            ],
+          ),
+          child: const SizedBox.shrink(),
         ),
       ),
     );

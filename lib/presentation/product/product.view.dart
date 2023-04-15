@@ -47,6 +47,7 @@ class _ProductViewState extends State<ProductView> {
             }
           },
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: appBar(),
             body: body(
               context,
@@ -154,14 +155,9 @@ class _ProductViewState extends State<ProductView> {
     TableRow tableRow({required String title, required String content, bool highlighted = false, Function()? onEdit, Widget? contentLeading}) {
       return TableRow(
         children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: (AppTheme.tableTitle.fontSize ?? 15) * 2,
-            ),
-            child: Text(
-              title,
-              style: AppTheme.tableTitle,
-            ),
+          Text(
+            title,
+            style: AppTheme.tableTitle,
           ),
           InkWell(
             onTap: onEdit,
@@ -191,11 +187,17 @@ class _ProductViewState extends State<ProductView> {
               ],
             ),
           ),
-        ],
+        ].map((child) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: child,
+          );
+        }).toList(),
       );
     }
 
-    return Table(
+    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final table = Table(
       columnWidths: const {
         0: FlexColumnWidth(),
         1: FlexColumnWidth(3),
@@ -287,6 +289,14 @@ class _ProductViewState extends State<ProductView> {
         ),
       ],
     );
+
+    if (isPortrait) {
+      return table;
+    } else {
+      return SingleChildScrollView(
+        child: table,
+      );
+    }
   }
 
   Widget actions() {

@@ -16,6 +16,10 @@ class AppTheme {
     fontSize: 15,
   );
 
+  static final productErrorLabel = _textStyle.copyWith(
+    fontSize: 13,
+  );
+
   static final inputText = _textStyle.copyWith(
     fontSize: 15,
   );

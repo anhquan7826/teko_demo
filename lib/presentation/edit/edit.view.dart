@@ -63,6 +63,7 @@ class _TextFieldEditorState extends State<_TextFieldEditor> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      scrollable: true,
       title: Text(
         widget.title,
         style: AppTheme.dialogTitle,
@@ -132,6 +133,7 @@ class _ColorFieldEditorState extends State<_ColorFieldEditor> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      scrollable: true,
       title: Text(
         widget.title,
         style: AppTheme.dialogTitle,
