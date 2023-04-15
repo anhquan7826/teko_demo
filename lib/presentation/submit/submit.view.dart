@@ -35,7 +35,7 @@ class SubmitView extends StatelessWidget {
         ),
         TextButton(
           onPressed: onDiscard,
-          child: const Text('Discard'),
+          child: const Text('Discard all'),
         ),
         TextButton(
           onPressed: onApply,
