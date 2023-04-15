@@ -16,6 +16,9 @@ class ImageNetworkWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!Uri.parse(url).isAbsolute) {
+      return Image.asset('assets/images/error.png');
+    }
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: Image.network(
