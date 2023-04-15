@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hiring_test/presentation/product/product.view.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../application/product/product.cubit.dart';
 import '../../../common/themes/theme.dart';
@@ -20,19 +20,16 @@ class ProductItem extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppTheme.imageRadius),
-        color: Colors.white,
+        color: AppTheme.productCardItem,
       ),
       margin: const EdgeInsets.all(4),
       padding: const EdgeInsets.all(4),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ProductView(id: product.id,);
-            },
-          );
+          context.goNamed('product', params: {
+            'id': id.toString(),
+          });
         },
         child: Column(
           children: [
@@ -40,14 +37,17 @@ class ProductItem extends StatelessWidget {
               flex: 4,
               child: Padding(
                 padding: const EdgeInsets.all(6),
-                child: ImageNetworkWidget(url: product.image),
+                child: Hero(
+                  tag: id,
+                  child: ImageNetworkWidget(url: product.image),
+                ),
               ),
             ),
             Expanded(
               child: AutoSizeText(
                 changedProduct?.name ?? product.name,
                 style: TextStyle(
-                  color: changedProduct?.name != null && changedProduct?.name != product.name ? Colors.green : Colors.black,
+                  color: changedProduct != null ? Colors.green : Colors.black,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,

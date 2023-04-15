@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hiring_test/application/product/product.cubit.dart';
 import 'package:hiring_test/domain/product_color/product_color.model.dart';
 import 'package:hiring_test/helper/color/color_helper.dart';
-import 'package:hiring_test/helper/debounce/debounce.dart';
 import 'package:hiring_test/presentation/edit/edit.cubit.dart';
 import 'package:hiring_test/presentation/edit/edit.state.dart';
 import 'package:hiring_test/presentation/error/not_found.view.dart';
@@ -49,7 +48,10 @@ class _EditViewState extends State<EditView> {
                 style: AppTheme.appbarTitle,
               ),
             ),
-            body: body(),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: body(),
+            ),
             bottomNavigationBar: cubit.hasChanges() ? actions() : null,
           );
         },
@@ -59,11 +61,7 @@ class _EditViewState extends State<EditView> {
 
   Widget body() {
     void onChanged() {
-      Debounce(milliseconds: 100).run(
-        () {
-          cubit.onChanged();
-        },
-      );
+      cubit.onChanged();
     }
 
     return SingleChildScrollView(
@@ -102,7 +100,13 @@ class _EditViewState extends State<EditView> {
                 ),
               );
             }).toList(),
-            decoration: const InputDecoration(border: OutlineInputBorder()),
+            decoration: InputDecoration(
+              label: Text(
+                'Color',
+                style: AppTheme.buttonLabel,
+              ),
+              border: const OutlineInputBorder(),
+            ),
             hint: const Text('Select colors...'),
             value: cubit.color,
             onChanged: (color) {
@@ -110,7 +114,12 @@ class _EditViewState extends State<EditView> {
               onChanged();
             },
           ),
-        ],
+        ].map((child) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: child,
+          );
+        }).toList(),
       ),
     );
   }
@@ -126,65 +135,64 @@ class _EditViewState extends State<EditView> {
       maxLength: maxLength,
       style: AppTheme.inputText,
       decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: controller.text.isEmpty ? Colors.red : Colors.black),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: controller.text.isEmpty ? Colors.red : Colors.blue,
-            width: 2,
+          errorText: controller.text.isEmpty ? 'This field cannot be empty!' : null,
+          label: Text(
+            label,
+            style: AppTheme.buttonLabel,
           ),
-        ),
-        label: Text(
-          label,
-          style: AppTheme.buttonLabel,
-        ),
-        focusColor: Colors.red,
-      ),
+          border: const OutlineInputBorder()),
       onChanged: (value) {
-        Debounce(milliseconds: 100).run(onChanged);
+        onChanged();
       },
     );
   }
 
   Widget actions() {
-    return Row(
-      children: [
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () {
-              if (cubit.isInvalid()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Name and SKU cannot be empty!',
-                      style: AppTheme.snackBar,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () {
+                if (cubit.isInvalid()) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Name and SKU cannot be empty!',
+                        style: AppTheme.snackBar,
+                      ),
                     ),
-                  ),
-                );
-              } else {
-                cubit.save();
-                context.pop();
-              }
-            },
-            child: Text(
-              'Save',
-              style: AppTheme.buttonLabel,
+                  );
+                } else {
+                  cubit.save();
+                  context.pop();
+                }
+              },
+              child: Text(
+                'Save',
+                style: AppTheme.buttonLabel,
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () {
-              showConfirmDialog();
-            },
-            child: Text(
-              'Discard',
-              style: AppTheme.buttonLabel,
+          const SizedBox(
+            width: 14,
+          ),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () {
+                showConfirmDialog();
+              },
+              child: Text(
+                'Discard',
+                style: AppTheme.buttonLabel.copyWith(
+                  color: Colors.red,
+                ),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -194,6 +202,7 @@ class _EditViewState extends State<EditView> {
       builder: (context) {
         return const ConfirmDialog(
           content: 'Are you sure to discard your changes?',
+          acceptTitle: 'Discard',
         );
       },
     ).then((value) {

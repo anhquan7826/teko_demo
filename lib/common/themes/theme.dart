@@ -44,6 +44,10 @@ class AppTheme {
     fontSize: 15,
   );
 
+  static const productCardItem = Colors.white;
+
+  static const errorColor = Colors.red;
+
   static const highlightColor = Colors.green;
 
   static const double imageRadius = 16;

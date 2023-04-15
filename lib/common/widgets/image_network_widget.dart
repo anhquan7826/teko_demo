@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 import '../themes/theme.dart';
 
 class ImageNetworkWidget extends StatelessWidget {
-  const ImageNetworkWidget({Key? key, required this.url}) : super(key: key);
+  const ImageNetworkWidget({
+    Key? key,
+    required this.url,
+    this.borderRadius = AppTheme.imageRadius,
+  }) : super(key: key);
 
   final String url;
+  final double borderRadius;
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(AppTheme.imageRadius),
+      borderRadius: BorderRadius.circular(borderRadius),
       child: Image.network(
         url,
         loadingBuilder: (context, child, chunk) {

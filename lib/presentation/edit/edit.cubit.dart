@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hiring_test/application/product/product.cubit.dart';
+import 'package:hiring_test/helper/debounce/debounce.dart';
 
 import '../../domain/product/product.model.dart';
 import '../../domain/product_color/product_color.model.dart';
@@ -31,12 +32,16 @@ class EditCubit extends Cubit<EditState> {
   late final TextEditingController skuController;
   late ProductColor color;
 
+  final debounce = Debounce(milliseconds: 150);
+
   void onChanged() {
-    emit(EditChangedState(
-      color: color.id,
-      name: nameController.text,
-      sku: skuController.text,
-    ));
+    debounce.run(() {
+      emit(EditChangedState(
+        color: color.id,
+        name: nameController.text,
+        sku: skuController.text,
+      ));
+    });
   }
 
   bool hasChanges() {

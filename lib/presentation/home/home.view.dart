@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hiring_test/application/product/product.cubit.dart';
 import 'package:hiring_test/application/product/product.state.dart';
 import 'package:hiring_test/common/themes/theme.dart';
+import 'package:hiring_test/common/widgets/custom_appbar.dart';
 import 'package:hiring_test/helper/boundary/boundary.dart';
 import 'package:hiring_test/presentation/home/widgets/page_indicator.dart';
 import 'package:hiring_test/presentation/submit/submit.view.dart';
@@ -22,6 +23,9 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  int currentIndex = 0;
+  final pageController = PageController();
+
   @override
   void dispose() {
     pageController.dispose();
@@ -73,60 +77,10 @@ class _HomeViewState extends State<HomeView> {
           );
         } else {
           return Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text(
-                'Product',
-                style: AppTheme.appbarTitle,
-              ),
-            ),
+            appBar: appBar(),
             body: body(context),
             bottomNavigationBar: BlocProvider.of<ProductCubit>(context).hasChanges()
-                ? Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 0.2 * MediaQuery.of(context).size.width,
-                  ),
-                  child: ElevatedButton.icon(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return SubmitView(
-                              products: BlocProvider.of<ProductCubit>(context).getAllChanges(),
-                              onApply: () {
-                                BlocProvider.of<ProductCubit>(context).applyChanges();
-                                context.pop();
-                              },
-                              onDiscard: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return const ConfirmDialog(
-                                      content: 'Are you sure to discard all changes?',
-                                      acceptTitle: 'Discard',
-                                      rejectTitle: 'Cancel',
-                                    );
-                                  },
-                                ).then((value) {
-                                  if (value == true) {
-                                    BlocProvider.of<ProductCubit>(context).discardChanges();
-                                    context.pop();
-                                  }
-                                });
-                              },
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.save_outlined,
-                      ),
-                      label: Text(
-                        'Submit',
-                        style: AppTheme.buttonLabel,
-                      ),
-                    ),
-                )
+                ? submit()
                 : null,
           );
         }
@@ -134,8 +88,14 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  int currentIndex = 0;
-  final pageController = PageController();
+  PreferredSizeWidget appBar() {
+    return customAppBar(
+      title: Text(
+        'Product',
+        style: AppTheme.appbarTitle,
+      ),
+    );
+  }
 
   Widget body(BuildContext context) {
     final products = BlocProvider.of<ProductCubit>(context).getAllProductIds();
@@ -170,11 +130,8 @@ class _HomeViewState extends State<HomeView> {
                   return 4;
                 }.call(),
                 children: products.getRange(10 * index, 10 * index + 10 > products.length ? products.length : 10 * index + 10).map((id) {
-                  return Hero(
-                    tag: id,
-                    child: ProductItem(
-                      id: id,
-                    ),
+                  return ProductItem(
+                    id: id,
                   );
                 }).toList(),
               );
@@ -200,6 +157,55 @@ class _HomeViewState extends State<HomeView> {
           },
         ),
       ],
+    );
+  }
+
+  Widget submit() {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 0.2 * MediaQuery.of(context).size.width,
+        vertical: 8,
+      ),
+      child: ElevatedButton.icon(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return SubmitView(
+                products: BlocProvider.of<ProductCubit>(context).getAllChanges(),
+                onApply: () {
+                  BlocProvider.of<ProductCubit>(context).applyChanges();
+                  context.pop();
+                },
+                onDiscard: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const ConfirmDialog(
+                        content: 'Are you sure to discard all changes?',
+                        acceptTitle: 'Discard',
+                        rejectTitle: 'Cancel',
+                      );
+                    },
+                  ).then((value) {
+                    if (value == true) {
+                      BlocProvider.of<ProductCubit>(context).discardChanges();
+                      context.pop();
+                    }
+                  });
+                },
+              );
+            },
+          );
+        },
+        icon: const Icon(
+          Icons.save_outlined,
+        ),
+        label: Text(
+          'Submit',
+          style: AppTheme.buttonLabel,
+        ),
+      ),
     );
   }
 }
